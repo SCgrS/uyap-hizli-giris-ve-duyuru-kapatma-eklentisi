@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; width: 400px; padding: 10px; margin: 0; background-color: #f9f9f9; }
+        h3 { margin-top: 0; font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 5px; color: #333; }
+        #log { font-size: 12px; max-height: 250px; overflow-y: auto; color: #555; }
+        .log-item { margin-bottom: 8px; border-bottom: 1px dashed #ddd; padding-bottom: 4px; line-height: 1.4; }
+        .empty { color: #888; font-style: italic; }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            background: #eee;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+        }
+        input:checked + .slider {
+            background-color: #689f38;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        .slider.round { border-radius: 24px; }
+        .slider.round:before { border-radius: 50%; }
+        
+        #toggleStatusText { 
+            font-weight: bold; 
+            font-size: 11.5px; 
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="toggle-container">
+        <span id="toggleStatusText">Durum Yükleniyor...</span>
+        <label class="switch">
+            <input type="checkbox" id="toggleSwitch">
+            <span class="slider round"></span>
+        </label>
+    </div>
+    <h3>Son Kapatılan Duyurular</h3>
+    <div id="log"><div class="empty">Yükleniyor...</div></div>
+    <script src="popup.js"></script>
+</body>
+</html>
