@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "UYAP Hızlı Giriş ve Duyuru Kapatma",
-  "version": "4.3",
+  "version": "5.5",
   "description": "Duyuruyu kapatır, E-imza ile girişe tıklar ve Pin alanına odaklanır.",
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",
     "128": "icon128.png"
   },
+  "permissions": ["storage", "offscreen"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

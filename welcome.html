@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kurulum tamamlandı — UYAP Hızlı Giriş</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&display=swap');
+
+  :root {
+    --paper: #f2f1ec;
+    --card: #ffffff;
+    --ink: #1c1f24;
+    --muted: #6d7178;
+    --line: #e3e1d9;
+    --go: #1f8a4c;
+    --go-soft: #e6f3ec;
+    --stop: #b23a2e;
+    --stop-soft: #f7e9e7;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 48px 20px 64px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    justify-content: center;
+  }
+
+  .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+  .wrap { width: 100%; max-width: 620px; }
+
+  /* ---- başlık ---- */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .brand img { width: 40px; height: 40px; border-radius: 9px; display: block; }
+  .brand-name { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+  .brand-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  h1 {
+    font-size: 25px;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
+  }
+
+  /* ---- durum rozeti ---- */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--stop-soft);
+    color: var(--stop);
+    border: 1px solid rgba(178, 58, 46, 0.18);
+    margin-bottom: 22px;
+    transition: background .25s ease, color .25s ease, border-color .25s ease;
+  }
+  .status .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .status.done {
+    background: var(--go-soft);
+    color: var(--go);
+    border-color: rgba(31, 138, 76, 0.2);
+  }
+  .status.done .dot { animation: none; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+
+  /* ---- kart ---- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 14px 18px 0;
+  }
+
+  /* ---- adımlar ---- */
+  ol.steps { list-style: none; margin: 6px 0 0; padding: 0; }
+  ol.steps li {
+    display: flex;
+    gap: 13px;
+    padding: 14px 18px;
+  }
+  ol.steps li + li { border-top: 1px dashed var(--line); }
+  .num {
+    width: 23px; height: 23px;
+    flex-shrink: 0;
+    border-radius: 7px;
+    background: var(--stop-soft);
+    color: var(--stop);
+    font-size: 11.5px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-desc { font-size: 13px; color: var(--ink); line-height: 1.55; }
+
+  /* ---- alt not / buton ---- */
+  .note {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--muted);
+    padding: 14px 18px;
+  }
+  .note strong { color: var(--ink); font-weight: 600; }
+
+  .actions { display: flex; align-items: center; gap: 12px; }
+  button {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  button:hover { background: #faf9f6; border-color: #d3d0c6; }
+  button.primary {
+    background: var(--go);
+    border-color: var(--go);
+    color: #fff;
+  }
+  button.primary:hover { background: #1a7541; border-color: #1a7541; }
+  button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  footer {
+    margin-top: 26px;
+    font-size: 10px;
+    color: var(--muted);
+    opacity: .7;
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <img src="icon48.png" alt="">
+    <div>
+      <div class="brand-name">UYAP Hızlı Giriş ve Duyuru Kapatma</div>
+      <div class="brand-sub mono">Kurulum tamamlandı</div>
+    </div>
+  </div>
+
+  <h1 id="headline">Son bir adım: Simgeyi araç çubuğuna sabitleyin</h1>
+  <div class="status" id="status">
+    <span class="dot"></span>
+    <span id="statusText">Sabitlenmesi bekleniyor</span>
+  </div>
+
+  <!-- Sabitleme yönergeleri -->
+  <div id="pinGuide">
+    <div class="card">
+      <div class="eyebrow mono">Nasıl yapılır?</div>
+
+      <ol class="steps">
+        <li>
+          <span class="num mono">1</span>
+          <div>
+            <div class="step-desc">
+              Sağ üst köşedeki yapboz simgesine tıklayın. Bu tuş Chrome'un uzantılar
+              menüsü açılır ve kurulu tüm eklentiler listelenir.
+            </div>
+          </div>
+        </li>
+        <li>
+          <span class="num mono">2</span>
+          <div>
+            <div class="step-desc">
+              Listede bu eklentinin satırındaki raptiye simgesine tıklayın veya eklentiye
+              sağ tıklayıp "sabitle" seçeneğini tıklayın.
+            </div>
+          </div>
+        </li>
+        <li>
+          <span class="num mono">3</span>
+          <div>
+            <div class="step-desc">
+              Hazır — simge artık araç çubuğunda. Simgeye tıklayarak ayarları açar, hangi
+              duyuruların kapatıldığını görürsünüz. Sabitleme tamamlandığında bu sayfa
+              kendiliğinden güncellenir.
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <div class="note">
+        <strong>Sabitlemek zorunlu değil.</strong> Eklenti sabitlemeseniz de arka planda çalışır:
+        duyuruları kapatır, Adalet e-İmza girişine tıklar ve Pin alanına odaklanır. Sabitleme
+        yalnızca ayarlara erişimi ve kapatılan duyuru bildirimlerini görsel olarak görmeyi
+        kolaylaştırır. Daha sonra istediğiniz an sabitleyebilir veya aynı yerden
+        kaldırabilirsiniz.
+      </div>
+    </div>
+  </div>
+
+  <!-- Sabitlendikten sonra -->
+  <div id="doneGuide" class="hidden">
+    <div class="card">
+      <div class="note">
+        Simge artık adres çubuğunun sağında. Tıklayarak Hızlı Giriş, Duyuru Kapatma,
+        Bildirim Sesi ve Menü Gizleme ayarlarını açabilir, son kapatılan duyuruları
+        görebilirsiniz. Bu sekmeyi kapatabilirsiniz.
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="primary" id="closeBtn">Bu sekmeyi kapat</button>
+    <button id="laterBtn">Sonra sabitleyeceğim</button>
+  </div>
+
+  <footer class="mono">Bu sayfa yalnızca ilk kurulumdan sonra bir kez açılır.</footer>
+
+</div>
+<script src="welcome.js"></script>
+</body>
+</html>

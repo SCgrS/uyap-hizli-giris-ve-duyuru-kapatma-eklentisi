@@ -1,72 +1,345 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial, sans-serif; width: 400px; padding: 10px; margin: 0; background-color: #f9f9f9; }
-        h3 { margin-top: 0; font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 5px; color: #333; }
-        #log { font-size: 12px; max-height: 250px; overflow-y: auto; color: #555; }
-        .log-item { margin-bottom: 8px; border-bottom: 1px dashed #ddd; padding-bottom: 4px; line-height: 1.4; }
-        .empty { color: #888; font-style: italic; }
+<meta charset="UTF-8">
+<title>UYAP Hızlı Giriş</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&display=swap');
 
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            background: #eee;
-            padding: 10px;
-            border-radius: 6px;
-        }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-            flex-shrink: 0;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px; width: 18px;
-            left: 3px; bottom: 3px;
-            background-color: white;
-            transition: .4s;
-        }
-        input:checked + .slider {
-            background-color: #689f38;
-        }
-        input:checked + .slider:before {
-            transform: translateX(20px);
-        }
-        .slider.round { border-radius: 24px; }
-        .slider.round:before { border-radius: 50%; }
-        
-        #toggleStatusText { 
-            font-weight: bold; 
-            font-size: 11.5px; 
-            margin-right: 10px;
-        }
-    </style>
+  :root {
+    --paper: #f2f1ec;
+    --card: #ffffff;
+    --ink: #1c1f24;
+    --muted: #6d7178;
+    --line: #e3e1d9;
+    --go: #1f8a4c;
+    --go-soft: #e6f3ec;
+    --stop: #b23a2e;
+    --stop-soft: #f7e9e7;
+    --hide: #4d5a6b;
+    --hide-soft: #eaecef;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { overflow: hidden; }
+
+  /* Popup penceresi en fazla 600px yüksekliğe çıkabilir; bunu aşınca Chrome
+     sağda kaydırma şeridi gösterir. Gövdeyi dikey flex yapıp üst sınır
+     verdiğimizde, taşan tek alan (duyuru listesi) kendi içinde küçülür ve
+     dış kaydırma şeridi hiç oluşmaz. */
+  body {
+    width: 392px;
+    max-height: 600px;
+    margin: 0;
+    padding: 12px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  /* ---- header ---- */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 2px 2px 8px;
+    flex-shrink: 0;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; flex: 1; padding-right: 8px; min-width: 0; }
+  .brand img { width: 30px; height: 30px; border-radius: 7px; display: block; flex-shrink: 0; }
+  .brand-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  /* ---- cards ---- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* Duyuru listesi kartı: artan/eksilen alanı bu kart üstlenir. */
+  .card.log-card {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 6px;
+  }
+
+  .eyebrow {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 9px 12px 0;
+    flex-shrink: 0;
+  }
+
+  .feature-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 12px;
+  }
+  .feature-row + .feature-row { border-top: 1px dashed var(--line); }
+
+  .feature-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+  .glyph {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .glyph.go { background: var(--go-soft); color: var(--go); }
+  .glyph.stop { background: var(--stop-soft); color: var(--stop); }
+  .glyph.hide { background: var(--hide-soft); color: var(--hide); }
+  .glyph svg { width: 16px; height: 16px; }
+
+  .feature-title { font-size: 12.5px; font-weight: 600; }
+  .feature-desc { font-size: 11px; color: var(--muted); margin-top: 1px; line-height: 1.3; }
+
+  /* ---- sound sub-block (Duyuru Kapatma'nın alt sekmesi) ---- */
+  .sub-block {
+    margin: 0 12px 8px;
+    background: var(--stop-soft);
+    border: 1px dashed var(--line);
+    border-left: 2px solid var(--stop);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: opacity .2s ease;
+  }
+
+  .sub-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 10px;
+    transition: opacity .2s ease;
+  }
+  .sub-row.dimmed { opacity: 0.42; }
+
+  .sub-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+  .sub-title { font-size: 10.5px; font-weight: 600; color: var(--ink); }
+  .sub-desc { font-size: 9px; color: var(--muted); line-height: 1.3; margin-top: 1px; }
+
+  .sub-select {
+    font-size: 9.5px;
+    font-weight: 600;
+    padding: 3px 5px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  /* ---- switch ---- */
+  .switch { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+  .switch.switch-sm { width: 32px; height: 18px; }
+  .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .track {
+    position: absolute; inset: 0;
+    background: #d6d4cc;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .2s ease;
+  }
+  .track::before {
+    content: "";
+    position: absolute;
+    width: 16px; height: 16px;
+    left: 3px; top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    transition: transform .2s ease;
+  }
+  .switch.switch-sm .track::before {
+    width: 12px; height: 12px;
+    left: 3px; top: 3px;
+  }
+  .switch.switch-xs { width: 26px; height: 15px; }
+  .switch.switch-xs .track::before {
+    width: 9px; height: 9px;
+    left: 3px; top: 3px;
+  }
+  input:checked + .track { background: var(--go); }
+  input:checked + .track::before { transform: translateX(16px); }
+  .switch.switch-sm input:checked + .track::before { transform: translateX(14px); }
+  .switch.switch-xs input:checked + .track::before { transform: translateX(11px); }
+  input:focus-visible + .track { outline: 2px solid var(--ink); outline-offset: 2px; }
+  input:disabled + .track { opacity: 0.35; cursor: not-allowed; }
+
+  /* ---- log ---- */
+  /* min-height: 0 -> duyuru yokken liste boş mesaj kadar yer kaplar,
+     popup kendiliğinden kısalır. max-height büyük tutuldu; gerçek sınırı
+     body'nin 600px'i koyar, yani liste alttan alabildiğince uzar. */
+  #log {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  /* Duyuru metni tam olarak yazılır, kırpılmaz. Uzun metinlerde liste
+     kendi içinde kaydırılır. */
+  .log-item {
+    padding: 9px 12px;
+    font-size: 11.5px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+  .log-item + .log-item { border-top: 1px dashed var(--line); }
+  .log-time {
+    font-size: 10px;
+    color: var(--go);
+    margin-right: 7px;
+  }
+  .empty {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 16px 12px;
+    text-align: center;
+  }
+
+  #log::-webkit-scrollbar { width: 7px; }
+  #log::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+
+  footer {
+    text-align: center;
+    font-size: 8px;
+    color: var(--muted);
+    opacity: 0.65;
+    padding-top: 1px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+</style>
 </head>
 <body>
-    <div class="toggle-container">
-        <span id="toggleStatusText">Durum Yükleniyor...</span>
-        <label class="switch">
-            <input type="checkbox" id="toggleSwitch">
-            <span class="slider round"></span>
-        </label>
+
+  <header>
+    <div class="brand">
+      <img src="icon48.png" alt="">
+      <div class="brand-name">UYAP Hızlı Giriş ve Duyuru Kapatma</div>
     </div>
-    <h3>Son Kapatılan Duyurular</h3>
+    <label class="switch" title="Eklentiyi tamamen aç/kapat">
+      <input type="checkbox" id="masterToggle">
+      <span class="track"></span>
+    </label>
+  </header>
+
+  <div class="card">
+    <div class="eyebrow mono">Ayarlar</div>
+
+    <div class="feature-row">
+      <div class="feature-info">
+        <span class="glyph go">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 4 14h6l-1 7 9-11h-6l1-7z"/></svg>
+        </span>
+        <div>
+          <div class="feature-title">Hızlı Giriş</div>
+          <div class="feature-desc">Adalet e-İmza girişine tıklar, Pin alanına odaklanır</div>
+        </div>
+      </div>
+      <label class="switch switch-sm">
+        <input type="checkbox" id="quickLoginToggle">
+        <span class="track"></span>
+      </label>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-info">
+        <span class="glyph stop">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </span>
+        <div>
+          <div class="feature-title">Duyuru Kapatma</div>
+          <div class="feature-desc">Açılan duyuru pencerelerini otomatik kapatır</div>
+        </div>
+      </div>
+      <label class="switch switch-sm">
+        <input type="checkbox" id="announcementsToggle">
+        <span class="track"></span>
+      </label>
+    </div>
+
+    <div class="sub-block" id="soundSubBlock">
+      <div class="sub-row" id="soundRow">
+        <div class="sub-info">
+          <span class="sub-title">Bildirim Sesi</span>
+          <span class="sub-desc">Duyuru kapatıldığında sesli bildirim çalar</span>
+        </div>
+        <label class="switch switch-xs">
+          <input type="checkbox" id="soundToggle">
+          <span class="track"></span>
+        </label>
+      </div>
+      <div class="sub-row" id="soundFrequencyRow">
+        <div class="sub-info">
+          <span class="sub-title">Duyuru Bildirim Sesi Sıklığı</span>
+          <span class="sub-desc">AYNI duyuruyu kapattığındaki bildirim sesi sıklığı. Sayım, tüm Chrome pencereleri kapanana kadar sürer.</span>
+        </div>
+        <select id="soundFrequencySelect" class="sub-select mono">
+          <option value="1">Her kapatmada</option>
+          <option value="2">2 kapatmada 1</option>
+          <option value="5">5 kapatmada 1</option>
+          <option value="10">10 kapatmada 1</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-info">
+        <span class="glyph hide">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17 6 12l5-5M18 17l-5-5 5-5"/></svg>
+        </span>
+        <div>
+          <div class="feature-title">Menü Gizleme</div>
+          <div class="feature-desc">Sol menüyü tüm sayfalarda otomatik daraltır/kapatır</div>
+        </div>
+      </div>
+      <label class="switch switch-sm">
+        <input type="checkbox" id="menuHideToggle">
+        <span class="track"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card log-card">
+    <div class="eyebrow mono">Son Kapatılan Duyurular</div>
     <div id="log"><div class="empty">Yükleniyor...</div></div>
-    <script src="popup.js"></script>
+  </div>
+
+  <footer class="mono">v5.5</footer>
+
+  <script src="popup.js"></script>
 </body>
 </html>
