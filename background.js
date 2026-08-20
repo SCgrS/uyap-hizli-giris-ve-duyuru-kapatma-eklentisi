@@ -260,6 +260,30 @@ async function handleSetToggleState(request, sendResponse) {
     sendResponse(state);
 }
 
+/* ------------------------------------------------------------------ */
+/* AÇILIŞ EKRANI                                                       */
+/*                                                                     */
+/* Eklenti ilk kez kurulduğunda welcome.html sekmesini bir kez açar.    */
+/* Güncellemelerde (reason === "update") açılmaz. Ayrıca storage'a bir  */
+/* bayrak yazarak, onInstalled'ın beklenmedik şekilde ikinci kez        */
+/* tetiklenmesi durumunda sekmenin tekrar açılmasını engelleriz.       */
+/* ------------------------------------------------------------------ */
+
+const WELCOME_SHOWN_KEY = "welcomeShown";
+
+async function openWelcomeTab() {
+    try {
+        const data = await chrome.storage.local.get({ [WELCOME_SHOWN_KEY]: false });
+        if (data[WELCOME_SHOWN_KEY]) return;
+        await chrome.storage.local.set({ [WELCOME_SHOWN_KEY]: true });
+        await chrome.tabs.create({ url: chrome.runtime.getURL("welcome.html") });
+    } catch (e) { /* yoksay */ }
+}
+
+chrome.runtime.onInstalled.addListener((details) => {
+    if (details.reason === "install") openWelcomeTab();
+});
+
 // Başlangıç
 chrome.storage.local.get(getDefaultState(), updateBadgeFrom);
 // Eski sürümden kalan, artık kullanılmayan kalıcı sayaçları temizle.
